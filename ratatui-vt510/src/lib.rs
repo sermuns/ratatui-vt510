@@ -4,7 +4,10 @@ use ratatui::{
     layout::{Position, Size},
 };
 use serialport::SerialPort;
-use std::io::{self, Write};
+use std::{
+    io::{self, Write},
+    time::Duration,
+};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -13,17 +16,26 @@ pub enum SerialBackendError {
     Io(#[from] io::Error),
 }
 
-pub struct SerialBackend {
+pub struct Vt510Backend {
     port: Box<dyn SerialPort>,
     size: Size,
 }
 
-impl SerialBackend {
-    pub fn new(port: Box<dyn SerialPort>, width: u16, height: u16) -> Self {
-        Self {
+impl Vt510Backend {
+    pub fn new(
+        serial_port_path: impl AsRef<str>,
+        timeout: Duration,
+        baud_rate: u32,
+        width: u16,
+        height: u16,
+    ) -> Result<Self, serialport::Error> {
+        let port = serialport::new(serial_port_path.as_ref(), baud_rate)
+            .timeout(timeout)
+            .open()?;
+        Ok(Self {
             port,
             size: Size::new(width, height),
-        }
+        })
     }
 
     fn write_raw(&mut self, s: &str) -> Result<(), SerialBackendError> {
@@ -37,7 +49,7 @@ impl SerialBackend {
     }
 }
 
-impl Backend for SerialBackend {
+impl Backend for Vt510Backend {
     type Error = SerialBackendError;
 
     fn draw<'a, I>(&mut self, content: I) -> Result<(), Self::Error>

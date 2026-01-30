@@ -1,0 +1,24 @@
+[package]
+name = "lysterminal"
+version = "0.1.0"
+edition = "2024"
+repository = "https://github.com/sermuns/ratatui-vt510"
+license = "WTFPL"
+
+[dependencies]
+clap = { version = "4.5.55", features = ["derive"] }
+color-eyre = { version = "0.6.5", default-features = false }
+ctrlc = "3.5.1"
+ratatui-vt510 = { path = "../ratatui-vt510", optional = true }
+ratatui.workspace = true
+
+[features]
+default = ["native"]
+native = []
+vt510 = ["ratatui-vt510"]
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

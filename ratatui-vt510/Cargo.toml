@@ -1,0 +1,12 @@
+[package]
+name = "ratatui-vt510"
+version = "0.1.0"
+edition = "2024"
+description = "ratatui backend for DEC VT510 terminal through serial"
+repository = "https://github.com/sermuns/ratatui-vt510"
+license = "WTFPL"
+
+[dependencies]
+ratatui = "0.30.0"
+serialport = "4.8.1"
+thiserror = "1.0"

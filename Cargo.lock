@@ -204,9 +204,9 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 
 [[package]]
 name = "clap"
-version = "4.5.55"
+version = "4.5.56"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e34525d5bbbd55da2bb745d34b36121baac88d07619a9a09cfcf4a6c0832785"
+checksum = "a75ca66430e33a14957acc24c5077b503e7d374151b2b4b3a10c83b4ceb4be0e"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -214,9 +214,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.5.55"
+version = "4.5.56"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59a20016a20a3da95bef50ec7238dbd09baeef4311dcdd38ec15aba69812fb61"
+checksum = "793207c7fa6300a0608d1080b858e5fdbe713cdc1c8db9fb17777d8a13e63df0"
 dependencies = [
  "anstream",
  "anstyle",
@@ -776,6 +776,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "lysterminal"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "color-eyre",
+ "ctrlc",
+ "ratatui",
+ "ratatui-vt510",
+]
+
+[[package]]
 name = "mac_address"
 version = "1.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1206,18 +1217,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ratatui-on-vt510"
-version = "0.1.0"
-dependencies = [
- "clap",
- "color-eyre",
- "ctrlc",
- "ratatui",
- "serialport",
- "thiserror 1.0.69",
-]
-
-[[package]]
 name = "ratatui-termwiz"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1225,6 +1224,15 @@ checksum = "0f76fe0bd0ed4295f0321b1676732e2454024c15a35d01904ddb315afd3d545c"
 dependencies = [
  "ratatui-core",
  "termwiz",
+]
+
+[[package]]
+name = "ratatui-vt510"
+version = "0.1.0"
+dependencies = [
+ "ratatui",
+ "serialport",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
