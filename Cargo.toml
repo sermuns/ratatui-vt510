@@ -7,3 +7,9 @@ members = [
 
 [workspace.dependencies]
 ratatui = "0.30.0"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
