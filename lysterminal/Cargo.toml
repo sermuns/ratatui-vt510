@@ -13,6 +13,6 @@ ratatui-vt510 = { path = "../ratatui-vt510", optional = true }
 ratatui.workspace = true
 
 [features]
-default = ["native"]
+default = ["vt510"]
 native = []
-vt510 = ["ratatui-vt510"]
+vt510 = ["dep:ratatui-vt510"]

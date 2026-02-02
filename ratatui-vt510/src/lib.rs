@@ -3,7 +3,7 @@ use ratatui::{
     buffer::Cell,
     layout::{Position, Size},
 };
-use serialport::SerialPort;
+use serialport::{FlowControl, SerialPort};
 use std::{
     io::{self, Write},
     time::Duration,
@@ -31,6 +31,7 @@ impl Vt510Backend {
     ) -> Result<Self, serialport::Error> {
         let port = serialport::new(serial_port_path.as_ref(), baud_rate)
             .timeout(timeout)
+            .flow_control(FlowControl::Software)
             .open()?;
         Ok(Self {
             port,
@@ -41,6 +42,12 @@ impl Vt510Backend {
     fn write_raw(&mut self, s: &str) -> Result<(), SerialBackendError> {
         self.port.write_all(s.as_bytes())?;
         Ok(())
+    }
+
+    pub fn read(&mut self) -> Result<[u8; 1024], SerialBackendError> {
+        let mut buf = [0u8; 1024]; // FIXME:
+        let _n = self.port.read(&mut buf)?;
+        Ok(buf)
     }
 
     fn move_cursor(&mut self, row: u16, col: u16) -> Result<(), SerialBackendError> {

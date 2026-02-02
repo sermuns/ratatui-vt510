@@ -5,49 +5,58 @@ use std::sync::{
     Arc,
     atomic::{AtomicBool, Ordering},
 };
+use std::time::Duration;
 
 mod app;
 
 use crate::app::App;
-#[cfg(feature = "vt510")]
-use ratatui_vt510::Vt510Backend;
-
-#[cfg(not(feature = "vt510"))]
-use {ratatui::prelude::CrosstermBackend, std::io::stdout};
 
 #[derive(Parser)]
 #[command(version)]
 struct Args {
     /// where to serve the TUI
-    #[cfg(feature = "vt510")]
     serial_port: String,
 }
 
 fn main() -> Result<()> {
     color_eyre::install()?;
-    let _args = Args::parse();
 
-    let interrupted = Arc::new(AtomicBool::new(true));
+    let interrupted = Arc::new(AtomicBool::new(false));
 
     let i = interrupted.clone();
     ctrlc::set_handler(move || {
-        i.store(false, Ordering::SeqCst);
+        println!("interrupted!");
+        i.store(true, Ordering::SeqCst);
     })
     .wrap_err("error setting Ctrl-C handler")?;
 
     #[cfg(feature = "vt510")]
-    println!("starting serving on {}", &args.serial_port);
+    let args = {
+        let args = Args::parse();
+        println!("starting serving on {}", &args.serial_port);
+        args
+    };
     #[cfg(feature = "vt510")]
-    let backend = Vt510Backend::new("/dev/pts/4", Duration::from_millis(10), 115_200, 80, 26)?;
+    let backend = ratatui_vt510::Vt510Backend::new(
+        args.serial_port,
+        Duration::from_millis(500),
+        57_600,
+        80,
+        24,
+    )?;
     #[cfg(not(feature = "vt510"))]
-    let backend = CrosstermBackend::new(stdout());
+    let backend = {
+        ratatui::crossterm::terminal::enable_raw_mode()?;
+        CrosstermBackend::new(stdout())
+    };
 
     let terminal = Terminal::new(backend)?;
 
-    let app = App::new(interrupted);
-    app.run(terminal)?;
+    let app = App::new(interrupted, terminal);
+    app.run()?;
 
-    #[cfg(feature = "vt510")]
+    #[cfg(not(feature = "vt510"))]
+    ratatui::crossterm::terminal::disable_raw_mode()?;
     println!("exiting..");
 
     Ok(())
