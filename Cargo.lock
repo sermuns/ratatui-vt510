@@ -784,6 +784,7 @@ dependencies = [
  "ctrlc",
  "ratatui",
  "ratatui-vt510",
+ "strum",
 ]
 
 [[package]]

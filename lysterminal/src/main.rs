@@ -1,11 +1,10 @@
 use clap::Parser;
 use color_eyre::{Result, eyre::Context};
-use ratatui::Terminal;
+use ratatui::prelude::*;
 use std::sync::{
     Arc,
     atomic::{AtomicBool, Ordering},
 };
-use std::time::Duration;
 
 mod app;
 
@@ -37,17 +36,21 @@ fn main() -> Result<()> {
         args
     };
     #[cfg(feature = "vt510")]
-    let backend = ratatui_vt510::Vt510Backend::new(
-        args.serial_port,
-        Duration::from_millis(500),
-        57_600,
-        80,
-        24,
-    )?;
+    let backend = {
+        use std::time::Duration;
+        ratatui_vt510::Vt510Backend::new(
+            args.serial_port,
+            Duration::from_millis(500),
+            57_600,
+            80,
+            24,
+        )?
+    };
     #[cfg(not(feature = "vt510"))]
     let backend = {
-        ratatui::crossterm::terminal::enable_raw_mode()?;
-        CrosstermBackend::new(stdout())
+        use ratatui::crossterm::terminal::enable_raw_mode;
+        enable_raw_mode()?;
+        CrosstermBackend::new(std::io::stdout())
     };
 
     let terminal = Terminal::new(backend)?;
